@@ -116,4 +116,26 @@ Show the diff between two versions of a skill.
 **Notes**
 - `from` and `to` can be commit hashes (short or full) or branch names.
 - **Never guess or infer commit hashes or branch names.** Always use `list_history` to find the exact refs when the user's description is ambiguous.
+
+
+### rollback_skill
+
+Roll back a skill to a previous version.
+
+**Input**
+- `skill_name` (required): the name of the skill.
+- `ref` (required): the target commit hash or branch name to roll back to.
+
+**Steps**
+1. Receive `skill_name` from the user. `ref` may be a vague description (e.g., "the version before the last update").
+2. If `ref` is not a precise commit hash or branch name, call `list_history` first to help the user identify the exact ref.
+3. Confirm the exact `ref` value with the user before proceeding.
+4. Call the `bash` tool with the command `bash .opencode/skills/git-your-skills/scripts/rollback_skill.sh <skill_name> <ref>`
+5. Analyze the diff between the previous and current version, and summarize what was rolled back for the user in plain language.
+6. If the user then updates this skill, remind them that a new branch will be created automatically (since HEAD is detached).
+
+**Notes**
+- **Never guess or infer commit hashes or branch names.** Always use `list_history` to find the exact ref when the user's description is ambiguous.
+- The script uses `git checkout` (not `reset`), so the original branch history is fully preserved.
+- After rollback, HEAD is detached. A subsequent `update_skill` will automatically create a new branch.
 ```
