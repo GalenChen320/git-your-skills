@@ -2,12 +2,13 @@
 
 # ============================================================
 # initialize_skill.sh
-# Usage: ./initialize_skill.sh <skill_name>
+# Usage: ./initialize_skill.sh <skill_name> [description]
 # ============================================================
 
 set -e
 
 SKILL_NAME=$1
+SKILL_DESCRIPTION=${2:-None}
 SKILL_PATH=".opencode/skills/$SKILL_NAME"
 
 # ────────────────────────────────────────
@@ -15,7 +16,7 @@ SKILL_PATH=".opencode/skills/$SKILL_NAME"
 # ────────────────────────────────────────
 if [ -z "$SKILL_NAME" ]; then
   echo "❌ Error: skill name is required."
-  echo "   Usage: ./initialize_skill.sh <skill_name>"
+  echo "   Usage: ./initialize_skill.sh <skill_name> [description]"
   exit 1
 fi
 
@@ -29,12 +30,26 @@ if ! command -v git &> /dev/null; then
 fi
 
 # ────────────────────────────────────────
-# 3. 检查文件夹是否存在
+# 3. 检查文件夹是否存在，不存在则创建
 # ────────────────────────────────────────
+DIR_NEWLY_CREATED=false
 if [ ! -d "$SKILL_PATH" ]; then
-  echo "❌ Error: skill directory does not exist."
-  echo "   Path: $SKILL_PATH"
-  exit 1
+  echo "🔧 Skill directory not found. Creating: $SKILL_PATH"
+  mkdir -p "$SKILL_PATH"
+  DIR_NEWLY_CREATED=true
+fi
+
+# ────────────────────────────────────────
+# 3.5 如果是新建目录，创建 SKILL.md
+# ────────────────────────────────────────
+if [ "$DIR_NEWLY_CREATED" = true ]; then
+  echo "📝 Creating SKILL.md with frontmatter..."
+  cat > "$SKILL_PATH/SKILL.md" <<EOF
+---
+name: $SKILL_NAME
+description: $SKILL_DESCRIPTION
+---
+EOF
 fi
 
 # ────────────────────────────────────────
@@ -42,7 +57,7 @@ fi
 # ────────────────────────────────────────
 if [ ! -d "$SKILL_PATH/.git" ]; then
   echo "🔧 Initializing git repository..."
-  git -C "$SKILL_PATH" init
+  git -C "$SKILL_PATH" init -b main
 else
   echo "ℹ️  Git already initialized in: $SKILL_PATH"
 fi
@@ -62,3 +77,9 @@ fi
 echo ""
 echo "✅ Skill '$SKILL_NAME' is ready."
 echo "   Path: $SKILL_PATH"
+
+if [ "$DIR_NEWLY_CREATED" = true ]; then
+  echo ""
+  echo "⚠️  Skill directory was newly created."
+  echo "   Please restart the opencode client for the skill to take effect."
+fi

@@ -37,14 +37,16 @@ Initialize a git repository for an existing skill.
 
 **Input**
 - `skill_name` (required): the name of the skill to initialize.
+- `description` (optional): a brief description of the skill's purpose. Defaults to `None` if not provided.
 
 **Steps**
-1. Receive `skill_name` from the user.
-2. Call the `bash` tool with the command `bash .opencode/skills/git-your-skills/scripts/initialize_skill.sh <skill_name>`
+1. Receive `skill_name` and optionally `description` from the user.
+2. Call the `bash` tool with the command `bash .opencode/skills/git-your-skills/scripts/initialize_skill.sh <skill_name> "<description>"`
 3. Report the result to the user.
 
 **Notes**
-- The skill directory must already exist at `.opencode/skills/<skill_name>/`.
+- The script will: check prerequisites → create the skill directory if missing (with a `SKILL.md` containing frontmatter) → init git with `main` as the default branch → commit all existing files.
+- If the skill directory was newly created, **remind the user to restart the opencode client for the skill to take effect**.
 - This action is idempotent — safe to run multiple times on the same skill.
 
 
