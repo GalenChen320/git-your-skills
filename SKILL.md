@@ -14,7 +14,7 @@ compatibility:
   - initialize_skill
   - update_skill
   - rollback_skill
-  - list_skill
+  - list_history
   - diff_skill
   - merge_skill
 ---
@@ -78,4 +78,22 @@ Update files of an existing skill and commit the changes.
 - If the script reports that git is not initialized, remind the user to run `initialize_skill` first — do NOT auto-initialize.
 - The script auto-sets a local git user config (`opencode / opencode@local`) so the user does not need to configure git credentials manually.
 - If the current HEAD is not at the tip of its branch (i.e., a rollback was performed earlier), the script will automatically create a new branch named `<branch>-<timestamp>` before committing, so the original branch history is preserved.
+
+
+### list_history
+
+List the commit history and branch topology of a skill.
+
+**Input**
+- `skill_name` (required): the name of the skill to list.
+- `limit` (optional): the maximum number of commits to display. Defaults to 20.
+
+**Steps**
+1. Receive `skill_name` and optionally `limit` from the user.
+2. Call the `bash` tool with the command `bash .opencode/skills/git-your-skills/scripts/list_history.sh <skill_name> <limit>`
+3. Report the result to the user.
+
+**Notes**
+- The script outputs two sections: a branch topology graph, and a chronological list of commits with timestamp, hash, and message.
+- If the script reports that git is not initialized, remind the user to run `initialize_skill` first — do NOT auto-initialize.
 ```
