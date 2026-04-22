@@ -6,14 +6,16 @@ description: >
   Trigger this skill when you need to:
   - initialize a new skill
   - update an existing skill
-  - roll back an existing skill
-  - branch off from an existing skill
-  - merge two branches together
+  - roll back an existing skill to a previous version
+  - list the commit history of a skill
+  - diff two versions of a skill
+  - merge different version branches of a skill
 compatibility: 
   - initialize_skill
   - update_skill
   - rollback_skill
-  - branch_skill
+  - list_skill
+  - diff_skill
   - merge_skill
 ---
 
