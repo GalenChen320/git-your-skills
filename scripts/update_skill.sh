@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ============================================================
-# commit_skill.sh
-# Usage: ./commit_skill.sh <skill_name> <commit_message>
+# update_skill.sh
+# Usage: ./update_skill.sh <skill_name> <commit_message>
 # ============================================================
 
 set -e
@@ -16,13 +16,13 @@ SKILL_PATH=".opencode/skills/$SKILL_NAME"
 # ────────────────────────────────────────
 if [ -z "$SKILL_NAME" ]; then
   echo "❌ Error: skill name is required."
-  echo "   Usage: ./commit_skill.sh <skill_name> <commit_message>"
+  echo "   Usage: ./update_skill.sh <skill_name> <commit_message>"
   exit 1
 fi
 
 if [ -z "$COMMIT_MSG" ]; then
   echo "❌ Error: commit message is required."
-  echo "   Usage: ./commit_skill.sh <skill_name> <commit_message>"
+  echo "   Usage: ./update_skill.sh <skill_name> <commit_message>"
   exit 1
 fi
 
@@ -55,7 +55,17 @@ if [ ! -d "$SKILL_PATH/.git" ]; then
 fi
 
 # ────────────────────────────────────────
-# 5. 检查是否有变更
+# 5. 确保 git user 配置存在（本地）
+# ────────────────────────────────────────
+if [ -z "$(git -C "$SKILL_PATH" config user.name)" ]; then
+  git -C "$SKILL_PATH" config user.name "opencode"
+fi
+if [ -z "$(git -C "$SKILL_PATH" config user.email)" ]; then
+  git -C "$SKILL_PATH" config user.email "opencode@local"
+fi
+
+# ────────────────────────────────────────
+# 6. 检查是否有变更
 # ────────────────────────────────────────
 git -C "$SKILL_PATH" add .
 
@@ -65,17 +75,19 @@ if git -C "$SKILL_PATH" diff --cached --quiet; then
 fi
 
 # ────────────────────────────────────────
-# 6. 执行 commit
+# 7. 执行 commit
 # ────────────────────────────────────────
 echo "📝 Committing changes..."
 
 if ! git -C "$SKILL_PATH" commit -m "$COMMIT_MSG"; then
   echo "❌ Error: commit failed."
-  echo "   Please check your git configuration (user.name, user.email)."
   exit 1
 fi
+
+COMMIT_HASH=$(git -C "$SKILL_PATH" rev-parse --short HEAD)
 
 echo ""
 echo "✅ Changes committed successfully."
 echo "   Skill: $SKILL_NAME"
+echo "   Commit: $COMMIT_HASH"
 echo "   Message: $COMMIT_MSG"

@@ -58,6 +58,8 @@ fi
 if [ ! -d "$SKILL_PATH/.git" ]; then
   echo "🔧 Initializing git repository..."
   git -C "$SKILL_PATH" init -b main
+  git -C "$SKILL_PATH" config user.name "opencode"
+  git -C "$SKILL_PATH" config user.email "opencode@local"
 else
   echo "ℹ️  Git already initialized in: $SKILL_PATH"
 fi

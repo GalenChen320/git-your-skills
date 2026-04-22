@@ -64,15 +64,17 @@ Update files of an existing skill and commit the changes.
    - If the changes involve other files, read them as needed during the discussion.
 4. Apply the changes to the relevant files.
 5. Summarize the changes and wait for the user to confirm.
-6. Generate a commit message based on the changes
+6. Generate a commit message based on the changes.
 7. Call the `bash` tool with the following command:
    ```
-   bash .opencode/skills/git-your-skills/scripts/commit_skill.sh <skill_name> "<commit_message>"
+   bash .opencode/skills/git-your-skills/scripts/update_skill.sh <skill_name> "<commit_message>"
    ```
 8. Report the result to the user.
+9. If the changes involved the frontmatter in `SKILL.md`, **remind the user to restart the opencode client for the changes to take effect**.
 
 **Notes**
 - Do not commit until the user explicitly confirms the changes.
 - Always wrap `<commit_message>` in double quotes when calling the script.
-- If the script reports that git is not initialized, ask the user to run `initialize_skill` first.
+- If the script reports that git is not initialized, remind the user to run `initialize_skill` first — do NOT auto-initialize.
+- The script auto-sets a local git user config (`opencode / opencode@local`) so the user does not need to configure git credentials manually.
 ```
