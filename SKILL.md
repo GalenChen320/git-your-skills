@@ -77,4 +77,5 @@ Update files of an existing skill and commit the changes.
 - Always wrap `<commit_message>` in double quotes when calling the script.
 - If the script reports that git is not initialized, remind the user to run `initialize_skill` first — do NOT auto-initialize.
 - The script auto-sets a local git user config (`opencode / opencode@local`) so the user does not need to configure git credentials manually.
+- If the current HEAD is not at the tip of its branch (i.e., a rollback was performed earlier), the script will automatically create a new branch named `<branch>-<timestamp>` before committing, so the original branch history is preserved.
 ```

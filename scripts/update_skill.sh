@@ -75,6 +75,20 @@ if git -C "$SKILL_PATH" diff --cached --quiet; then
 fi
 
 # ────────────────────────────────────────
+# 6.5 检测 HEAD 是否在分支顶端，否则创建新分支
+# ────────────────────────────────────────
+CURRENT_BRANCH=$(git -C "$SKILL_PATH" rev-parse --abbrev-ref HEAD)
+BRANCH_TIP=$(git -C "$SKILL_PATH" rev-parse "$CURRENT_BRANCH")
+CURRENT_HEAD=$(git -C "$SKILL_PATH" rev-parse HEAD)
+
+if [ "$CURRENT_HEAD" != "$BRANCH_TIP" ]; then
+  TIMESTAMP=$(date +%Y%m%d%H%M%S)
+  NEW_BRANCH="${CURRENT_BRANCH}-${TIMESTAMP}"
+  git -C "$SKILL_PATH" checkout -b "$NEW_BRANCH"
+  echo "🔀 Created new branch: $NEW_BRANCH (HEAD was behind $CURRENT_BRANCH tip)"
+fi
+
+# ────────────────────────────────────────
 # 7. 执行 commit
 # ────────────────────────────────────────
 echo "📝 Committing changes..."
