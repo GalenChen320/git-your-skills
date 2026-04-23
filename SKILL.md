@@ -155,15 +155,15 @@ Merge one branch of a skill into another (source → target).
 3. Confirm the exact `source` and `target` with the user — make sure the direction is clear (source is merged INTO target).
 4. Call `show_diff` between `source` and `target` to understand the differences.
 5. Analyze the semantic differences and discuss each item with the user one by one. Let the user decide how to handle each difference.
-6. Once all differences are discussed and agreed upon, call the `bash` tool with the command:
-   ```
-   bash .opencode/skills/git-your-skills/scripts/merge_skill.sh <skill_name> <source> <target>
-   ```
-7. If the script reports a merge conflict, present the conflict details to the user and let them resolve it manually. After resolving, use `update_skill` to commit the resolved merge.
-8. If the merge succeeds, summarize the merged changes for the user in plain language.
+6. Call the `bash` tool with the command `bash .opencode/skills/git-your-skills/scripts/merge_skill.sh <skill_name> <source> <target>`
+7. If the script reports conflicts:
+   - Read each conflicted file (files containing `<<<<<<<`, `=======`, `>>>>>>>` markers).
+   - Resolve each conflict using the Edit tool, based on the discussion results from step 5.
+   - Call `update_skill.sh` with the commit message `"Merge <source> into <target>"` to complete the merge commit.
+   - **Do NOT abort the merge** (`git merge --abort`). The repo must stay in merge state until conflicts are resolved and committed.
+8. If the merge succeeds without conflicts, summarize the merged changes for the user in plain language.
 
 **Notes**
 - **Never guess or infer branch names.** Always use `list_history` to find the exact branches when the user's description is ambiguous.
 - The merge direction is always source → target (left merges into right).
-- If conflicts occur, the merge is aborted and the user must resolve conflicts manually before committing.
-```
+- When conflicts occur, the repo is left in a merge state. AI must resolve all conflicts and commit via `update_skill` before any other git operations can proceed.

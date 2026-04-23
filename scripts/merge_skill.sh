@@ -82,13 +82,11 @@ MERGE_RESULT=$(git -C "$SKILL_PATH" merge "$SOURCE" 2>&1) || true
 
 if echo "$MERGE_RESULT" | grep -q "CONFLICT"; then
   echo ""
-  echo "⚠️  Merge conflict detected!"
+  echo "⚠️  Merge conflict detected in the following files:"
+  git -C "$SKILL_PATH" diff --name-only --diff-filter=U
   echo ""
-  echo "$MERGE_RESULT"
-  echo ""
-  echo "❌ Merge was not completed. Conflicts must be resolved manually."
-  echo "   After resolving conflicts, run update_skill to commit the resolved merge."
-  exit 1
+  echo "The repository is in a merge state. Please resolve all conflicts, then use update_skill to commit."
+  exit 0
 fi
 
 if echo "$MERGE_RESULT" | grep -q "Already up to date"; then
