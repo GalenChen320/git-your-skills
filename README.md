@@ -9,8 +9,12 @@
 </div>
 
 
+<div align="center">
+
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Opencode](https://img.shields.io/badge/opencode-compatible-brightgreen)
+
+</div>
 
 
 ## What is this?
