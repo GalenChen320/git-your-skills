@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[中文](README.md) | Current: English
+[中文](README_CN.md) | Current: English
 
 </div>
 
