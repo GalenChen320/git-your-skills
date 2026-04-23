@@ -131,8 +131,9 @@ Roll back a skill to a previous version.
 2. If `ref` is not a precise commit hash or branch name, call `list_history` first to help the user identify the exact ref.
 3. Confirm the exact `ref` value with the user before proceeding.
 4. Call the `bash` tool with the command `bash .opencode/skills/git-your-skills/scripts/rollback_skill.sh <skill_name> <ref>`
-5. Analyze the diff between the previous and current version, and summarize what was rolled back for the user in plain language.
-6. If the user then updates this skill, remind them that a new branch will be created automatically (since HEAD is detached).
+5. Call `show_diff` between the previous HEAD and the new HEAD to understand what was rolled back.
+6. Summarize what was rolled back for the user in plain language.
+7. If the user then updates this skill, remind them that a new branch will be created automatically (since HEAD is detached).
 
 **Notes**
 - **Never guess or infer commit hashes or branch names.** Always use `list_history` to find the exact ref when the user's description is ambiguous.
@@ -159,7 +160,7 @@ Merge one branch of a skill into another (source → target).
 7. If the script reports conflicts:
    - Read each conflicted file (files containing `<<<<<<<`, `=======`, `>>>>>>>` markers).
    - Resolve each conflict using the Edit tool, based on the discussion results from step 5.
-   - Call `update_skill.sh` with the commit message `"Merge <source> into <target>"` to complete the merge commit.
+   - Call `bash .opencode/skills/git-your-skills/scripts/update_skill.sh <skill_name> "Merge <source> into <target>"` to complete the merge commit.
    - **Do NOT abort the merge** (`git merge --abort`). The repo must stay in merge state until conflicts are resolved and committed.
 8. If the merge succeeds without conflicts, summarize the merged changes for the user in plain language.
 
