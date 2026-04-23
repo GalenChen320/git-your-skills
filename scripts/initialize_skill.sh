@@ -65,7 +65,23 @@ else
 fi
 
 # ────────────────────────────────────────
-# 5. 提交所有现有文件（幂等）
+# 5. 将 .opencode 加入根目录 .gitignore（避免与 skill 的 git 冲突）
+# ────────────────────────────────────────
+GITIGNORE=".gitignore"
+if [ -f "$GITIGNORE" ]; then
+  if ! grep -qxF '.opencode' "$GITIGNORE"; then
+    echo '.opencode' >> "$GITIGNORE"
+    echo "📝 Added '.opencode' to .gitignore"
+  else
+    echo "ℹ️  '.opencode' already in .gitignore"
+  fi
+else
+  echo '.opencode' > "$GITIGNORE"
+  echo "📝 Created .gitignore with '.opencode'"
+fi
+
+# ────────────────────────────────────────
+# 6. 提交所有现有文件（幂等）
 # ────────────────────────────────────────
 git -C "$SKILL_PATH" add .
 
