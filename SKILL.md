@@ -138,4 +138,32 @@ Roll back a skill to a previous version.
 - **Never guess or infer commit hashes or branch names.** Always use `list_history` to find the exact ref when the user's description is ambiguous.
 - The script uses `git checkout` (not `reset`), so the original branch history is fully preserved.
 - After rollback, HEAD is detached. A subsequent `update_skill` will automatically create a new branch.
+
+
+### merge_skill
+
+Merge one branch of a skill into another (source → target).
+
+**Input**
+- `skill_name` (required): the name of the skill.
+- `source` (required): the branch to merge from.
+- `target` (required): the branch to merge into.
+
+**Steps**
+1. Receive `skill_name` from the user. `source` and `target` may be vague descriptions (e.g., "merge the old branch back into main").
+2. If `source` or `target` is not a precise branch name, call `list_history` first to help the user identify the exact branches.
+3. Confirm the exact `source` and `target` with the user — make sure the direction is clear (source is merged INTO target).
+4. Call `show_diff` between `source` and `target` to understand the differences.
+5. Analyze the semantic differences and discuss each item with the user one by one. Let the user decide how to handle each difference.
+6. Once all differences are discussed and agreed upon, call the `bash` tool with the command:
+   ```
+   bash .opencode/skills/git-your-skills/scripts/merge_skill.sh <skill_name> <source> <target>
+   ```
+7. If the script reports a merge conflict, present the conflict details to the user and let them resolve it manually. After resolving, use `update_skill` to commit the resolved merge.
+8. If the merge succeeds, summarize the merged changes for the user in plain language.
+
+**Notes**
+- **Never guess or infer branch names.** Always use `list_history` to find the exact branches when the user's description is ambiguous.
+- The merge direction is always source → target (left merges into right).
+- If conflicts occur, the merge is aborted and the user must resolve conflicts manually before committing.
 ```
