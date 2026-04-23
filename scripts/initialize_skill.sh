@@ -69,11 +69,11 @@ fi
 # ────────────────────────────────────────
 git -C "$SKILL_PATH" add .
 
-if git -C "$SKILL_PATH" diff --cached --quiet; then
-  echo "ℹ️  Nothing to commit. Working tree is clean."
-else
+if ! git -C "$SKILL_PATH" diff --cached --quiet 2>/dev/null; then
   echo "📝 Committing existing files..."
   git -C "$SKILL_PATH" commit -m "🎉 Initialize skill: $SKILL_NAME"
+else
+  echo "ℹ️  Nothing to commit. Working tree is clean."
 fi
 
 echo ""

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ============================================================
-# list_skill.sh
-# Usage: ./list_skill.sh <skill_name> [limit]
+# list_history.sh
+# Usage: ./list_history.sh <skill_name> [limit]
 # ============================================================
 
 set -e
@@ -16,7 +16,7 @@ SKILL_PATH=".opencode/skills/$SKILL_NAME"
 # ────────────────────────────────────────
 if [ -z "$SKILL_NAME" ]; then
   echo "❌ Error: skill name is required."
-  echo "   Usage: ./list_skill.sh <skill_name> [limit]"
+  echo "   Usage: ./list_history.sh <skill_name> [limit]"
   exit 1
 fi
 

@@ -64,6 +64,16 @@ if ! git -C "$SKILL_PATH" rev-parse --verify "$TARGET" &> /dev/null; then
 fi
 
 # ────────────────────────────────────────
+# 5.5 检查工作区是否有未提交的修改
+# ────────────────────────────────────────
+if ! git -C "$SKILL_PATH" diff --quiet 2>/dev/null || ! git -C "$SKILL_PATH" diff --cached --quiet 2>/dev/null; then
+  echo "❌ Error: uncommitted changes detected in working directory."
+  echo "   Please commit or stash your changes before merging."
+  echo "   Run update_skill first, then try merge again."
+  exit 1
+fi
+
+# ────────────────────────────────────────
 # 6. 确保 git user 配置存在（本地）
 # ────────────────────────────────────────
 if [ -z "$(git -C "$SKILL_PATH" config user.name)" ]; then
@@ -78,20 +88,19 @@ fi
 # ────────────────────────────────────────
 git -C "$SKILL_PATH" checkout "$TARGET"
 
-MERGE_RESULT=$(git -C "$SKILL_PATH" merge "$SOURCE" 2>&1) || true
-
-if echo "$MERGE_RESULT" | grep -q "CONFLICT"; then
-  echo ""
-  echo "⚠️  Merge conflict detected in the following files:"
-  git -C "$SKILL_PATH" diff --name-only --diff-filter=U
-  echo ""
-  echo "The repository is in a merge state. Please resolve all conflicts, then use update_skill to commit."
-  exit 0
-fi
-
-if echo "$MERGE_RESULT" | grep -q "Already up to date"; then
-  echo "ℹ️  Already up to date. Nothing to merge."
-  exit 0
+if ! git -C "$SKILL_PATH" merge "$SOURCE" 2>&1; then
+  # merge returned non-zero — check for conflicts
+  if git -C "$SKILL_PATH" diff --name-only --diff-filter=U | grep -q .; then
+    echo ""
+    echo "⚠️  Merge conflict detected in the following files:"
+    git -C "$SKILL_PATH" diff --name-only --diff-filter=U
+    echo ""
+    echo "The repository is in a merge state. Please resolve all conflicts, then use update_skill to commit."
+    exit 0
+  else
+    echo "❌ Error: merge failed for an unknown reason."
+    exit 1
+  fi
 fi
 
 COMMIT_HASH=$(git -C "$SKILL_PATH" rev-parse --short HEAD)

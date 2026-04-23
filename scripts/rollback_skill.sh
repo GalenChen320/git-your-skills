@@ -57,6 +57,16 @@ if ! git -C "$SKILL_PATH" rev-parse --verify "$REF" &> /dev/null; then
 fi
 
 # ────────────────────────────────────────
+# 5.5 检查工作区是否有未提交的修改
+# ────────────────────────────────────────
+if ! git -C "$SKILL_PATH" diff --quiet 2>/dev/null || ! git -C "$SKILL_PATH" diff --cached --quiet 2>/dev/null; then
+  echo "❌ Error: uncommitted changes detected in working directory."
+  echo "   Please commit or stash your changes before rolling back."
+  echo "   Run update_skill first, then try rollback again."
+  exit 1
+fi
+
+# ────────────────────────────────────────
 # 6. 记录当前 HEAD 用于后续对比
 # ────────────────────────────────────────
 OLD_HEAD=$(git -C "$SKILL_PATH" rev-parse HEAD)

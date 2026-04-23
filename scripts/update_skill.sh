@@ -69,23 +69,45 @@ fi
 # ────────────────────────────────────────
 git -C "$SKILL_PATH" add .
 
-if git -C "$SKILL_PATH" diff --cached --quiet; then
+if ! git -C "$SKILL_PATH" diff --cached --quiet 2>/dev/null; then
+  # ────────────────────────────────────────
+  # 6.5 检测 HEAD 是否在分支顶端，否则创建新分支
+  # ────────────────────────────────────────
+  CURRENT_BRANCH=$(git -C "$SKILL_PATH" rev-parse --abbrev-ref HEAD)
+
+  if [ "$CURRENT_BRANCH" = "HEAD" ]; then
+    # HEAD is detached (e.g., after rollback). Find the original branch.
+    # Use git branch --contains to find branches that contain the original tip,
+    # then pick the one whose tip is ahead of current HEAD.
+    PARENT_BRANCH=$(git -C "$SKILL_PATH" branch --contains HEAD --format='%(refname:short)' | head -1)
+    if [ -n "$PARENT_BRANCH" ]; then
+      PARENT_TIP=$(git -C "$SKILL_PATH" rev-parse "$PARENT_BRANCH")
+      CURRENT_HASH=$(git -C "$SKILL_PATH" rev-parse HEAD)
+      if [ "$CURRENT_HASH" != "$PARENT_TIP" ]; then
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        NEW_BRANCH="${PARENT_BRANCH}-${TIMESTAMP}"
+        git -C "$SKILL_PATH" checkout -b "$NEW_BRANCH"
+        echo "🔀 HEAD was detached. Created new branch: $NEW_BRANCH"
+      fi
+    else
+      TIMESTAMP=$(date +%Y%m%d%H%M%S)
+      NEW_BRANCH="main-${TIMESTAMP}"
+      git -C "$SKILL_PATH" checkout -b "$NEW_BRANCH"
+      echo "🔀 HEAD was detached. Created new branch: $NEW_BRANCH"
+    fi
+  else
+    BRANCH_TIP=$(git -C "$SKILL_PATH" rev-parse "$CURRENT_BRANCH")
+    CURRENT_HASH=$(git -C "$SKILL_PATH" rev-parse HEAD)
+    if [ "$CURRENT_HASH" != "$BRANCH_TIP" ]; then
+      TIMESTAMP=$(date +%Y%m%d%H%M%S)
+      NEW_BRANCH="${CURRENT_BRANCH}-${TIMESTAMP}"
+      git -C "$SKILL_PATH" checkout -b "$NEW_BRANCH"
+      echo "🔀 Created new branch: $NEW_BRANCH (HEAD was behind $CURRENT_BRANCH tip)"
+    fi
+  fi
+else
   echo "ℹ️  Nothing to commit. Working tree is clean."
   exit 0
-fi
-
-# ────────────────────────────────────────
-# 6.5 检测 HEAD 是否在分支顶端，否则创建新分支
-# ────────────────────────────────────────
-CURRENT_BRANCH=$(git -C "$SKILL_PATH" rev-parse --abbrev-ref HEAD)
-BRANCH_TIP=$(git -C "$SKILL_PATH" rev-parse "$CURRENT_BRANCH")
-CURRENT_HEAD=$(git -C "$SKILL_PATH" rev-parse HEAD)
-
-if [ "$CURRENT_HEAD" != "$BRANCH_TIP" ]; then
-  TIMESTAMP=$(date +%Y%m%d%H%M%S)
-  NEW_BRANCH="${CURRENT_BRANCH}-${TIMESTAMP}"
-  git -C "$SKILL_PATH" checkout -b "$NEW_BRANCH"
-  echo "🔀 Created new branch: $NEW_BRANCH (HEAD was behind $CURRENT_BRANCH tip)"
 fi
 
 # ────────────────────────────────────────

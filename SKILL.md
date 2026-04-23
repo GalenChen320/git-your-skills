@@ -57,14 +57,16 @@ Update files of an existing skill and commit the changes.
 
 **Input**
 - `skill_name` (required): the name of the skill to update.
+- `auto` (optional): defaults to `false`. When `true`, skip all discussion and directly apply changes.
 
 **Steps**
-1. Receive `skill_name` from the user.
+1. Receive `skill_name` and optionally `auto` from the user.
 2. Read `.opencode/skills/<skill_name>/SKILL.md` first.
-3. Discuss the changes with the user until the changes are clear and agreed upon.
+3. If `auto` is `false`:
+   - Discuss the changes with the user until the changes are clear and agreed upon.
    - If the changes involve other files, read them as needed during the discussion.
-4. Apply the changes to the relevant files.
-5. Summarize the changes and wait for the user to confirm.
+4. Apply the changes to the relevant files. Follow the **principle of minimal necessary changes** — only modify what is required, nothing more.
+5. If `auto` is `false`, summarize the changes and wait for the user to confirm.
 6. Generate a commit message based on the changes.
 7. Call the `bash` tool with the following command:
    ```
@@ -74,7 +76,8 @@ Update files of an existing skill and commit the changes.
 9. If the changes involved the frontmatter in `SKILL.md`, **remind the user to restart the opencode client for the changes to take effect**.
 
 **Notes**
-- Do not commit until the user explicitly confirms the changes.
+- When `auto` is `false`, do NOT commit until the user explicitly confirms the changes.
+- When `auto` is `true`, do NOT ask the user any questions or seek clarification. Apply the changes directly and commit immediately.
 - Always wrap `<commit_message>` in double quotes when calling the script.
 - The script auto-sets a local git user config (`opencode / opencode@local`) so the user does not need to configure git credentials manually.
 - If the current HEAD is not at the tip of its branch (i.e., a rollback was performed earlier), the script will automatically create a new branch named `<branch>-<timestamp>` before committing, so the original branch history is preserved.
