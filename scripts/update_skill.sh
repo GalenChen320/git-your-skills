@@ -79,7 +79,7 @@ if ! git -C "$SKILL_PATH" diff --cached --quiet 2>/dev/null; then
     # HEAD is detached (e.g., after rollback). Find the original branch.
     # Use git branch --contains to find branches that contain the original tip,
     # then pick the one whose tip is ahead of current HEAD.
-    PARENT_BRANCH=$(git -C "$SKILL_PATH" branch --contains HEAD --format='%(refname:short)' | head -1)
+    PARENT_BRANCH=$(git -C "$SKILL_PATH" branch --contains HEAD --format='%(refname:short)' | grep -v 'detached' | head -1)
     if [ -n "$PARENT_BRANCH" ]; then
       PARENT_TIP=$(git -C "$SKILL_PATH" rev-parse "$PARENT_BRANCH")
       CURRENT_HASH=$(git -C "$SKILL_PATH" rev-parse HEAD)
