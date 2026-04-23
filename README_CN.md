@@ -2,6 +2,13 @@
 
 *兼容性：仅适用于Opencode*
 
+<div align="center">
+
+[English](README.en.md) | 当前：中文
+
+</div>
+
+
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Opencode](https://img.shields.io/badge/opencode-compatible-brightgreen)
 
